@@ -1,0 +1,195 @@
+#. <(curl -sS http://vpsilo.com/scripts/const_2)
+#This was created by Mike Weaver mweaver@bluehost.com
+#This script is way to long for how simple it should be... oh well.
+#(If I get rid of comments and extra spaces, it's like 80 lines long.)
+
+#Themes
+#----------------------------------------------------------------
+coneThemeFile="cone.svg"
+coneThemeName="cone"
+
+grungeThemeFile="under_construction_sign.jpg"
+grungeThemeName="grunge"
+
+simpleThemeFile=""
+simpleThemeName="simple"
+
+#Functions
+#----------------------------------------------------------------
+
+#Installs the Theme.
+function __installThemeFiles() {
+	#Usage is:
+	# $1 = Theme Name
+	# $2 = Additional Files to Check
+
+	#Checks if the theme files exist
+	#if they don't, installs the theme
+if [ -e "index.html" -o -e "$2" ]
+then #Files are in the way of installing the theme
+
+	#Scans the index.html file for the comment tag left in the code to identify what is in the way
+	#This is basically a check to see if a known theme actually exists, or if it's just 
+	#files with the same name that are in the way.
+
+	if grep -q -s '<!--.*Under Construction Page-->' "index.html";
+	then #A theme was found
+		echo "You already have a theme installed"
+	else #A theme was not found
+		echo -n "index.html "
+		if [ -n "$2" ]; #echos the extra file $2, if there is one.
+		then
+			echo -n "or $2 "
+		fi
+		echo "already exists. Install failing."
+	fi
+
+else #Installs Theme
+	wget --quiet $siteurl$1.tar.gz -O - | tar xz
+	echo "The ${1^} Under Construction theme is now installed. (index.html ${2})"
+fi
+
+}
+
+#Program
+#----------------------------------------------------------------
+
+function cpage() {
+
+#Help Documentation
+echo -e "
+   __________                 
+  / ____/ __ \____ _____ ____ 
+ / /   / /_/ / __ \`/ __ \`/ _ \\
+/ /___/ ____/ /_/ / /_/ /  __/
+\____/_/    \__,_/\__, /\___/ 
+                 /____/  
+\ta under construction page toolkit.
+
+CPage $constv downloads and installs a very lightweight \"Under Construction\" Page.
+It assumes you are running said functions in the site's root folder. Each
+command listed below each have a -h option for more specific information:
+
+\tcpage: basic overview
+\tcpinstall: theme tool
+\tcprm: remove page tool
+\tcpurl: change URL tool
+"
+
+}
+
+function cprm() {
+	if [[ $1 == "--help" || $1 == "-h" ]]; then
+		echo -e "
+		This tool removes the installation of the \"Under Construction\" Page.
+		To make this possible the tool checks the index.html for the CPage tag, 
+		and if found, removes the index.html page and any additional files.
+		This assumes you're in the directory of the site you want to remove.
+
+		Usage:
+		\tcprm
+		"
+		return
+	fi
+
+#Remove Installed Theme
+		#Removes the Theme by scanning index.html for the Comment code to determine what theme 
+		#it is, then removes it's files
+		if grep -q -s '<!--Cone Under Construction Page-->' "index.html"; then
+			rm -f index.html $coneThemeFile
+			echo "The Cone theme has been removed. (index.html $coneThemeFile)"
+		elif grep -q -s '<!--Grunge Under Construction Page-->' "index.html"; then
+			rm -f index.html $grungeThemeFile
+			echo "The Grunge theme has been removed. (index.html $grungeThemeFile)"
+		elif grep -q -s '<!--Simple Under Construction Page-->' "index.html"; then
+			rm -f index.html $simpleThemeFile
+			echo "The Simple theme has been removed. (index.html $simpleThemeFile)"
+
+		#If the comment cannot be found. (removed or not the theme), the check fails
+		else
+			echo 'No known theme is installed or the comments have been removed. You have to remove it manually.'
+		fi
+}
+
+function cpurl() {
+	if [[ $1 == "--help" || $1 == "-h" ]]; then
+		echo -e "
+		This tool the address shown on the \"Under Construction\" Page.
+		If the theme does not show it, then changing the URL will not be available.
+
+		Usage:
+		\tcpurl [url address]
+
+		Example:
+		\tcpurl www.lotrfansite.com
+		"
+		return
+	fi
+
+#Changes the name of the Web Address
+	#Checks if it's the Grunge Theme. If so, it fails.
+	if grep -q '<!--Grunge Under Construction Page-->' "index.html"; then
+		echo 'The grunge theme has no words. This makes this theme incompatible with the webaddress rename.'
+
+	#Checks if the $2 Paramater Exists
+	elif [ -n "$1" ] && [[ $1 != "" ]]; then   
+		#Replaces eveything between ">" and " is coming soon!"
+		#with whatever is in Paramater $2 
+		echo "Replaced with: ${1}"
+		sed -i 's,>.*is coming soon!,>'"$1"' is coming soon!,g' index.html
+
+	#Fail Case
+	else
+		echo 'You did not specify a website to change it to.'
+	fi
+}
+
+function cpinstall() {
+	if [[ $1 == "--help" || $1 == "-h" ]]; then
+		echo -e "
+		This tool attempts to download and install the default (cone) \"Under Construction\" Page.
+		If a theme is specified, it will install that theme instead of the default.
+
+		Available themes: cone grunge simple
+
+		Usage:
+		\tcpinstall [option [param]]
+
+		\t-t [theme] 
+		\t\t installs the specified theme.
+
+		Example:
+		\tcpinstall -t simple
+		"
+		return
+	fi
+
+
+#Install Custom Theme
+if [[ $1 == "-t" ]]; then 
+	case $2 in
+		$coneThemeName)
+ 			__installThemeFiles $coneThemeName $coneThemeFile;
+  			;;
+		$grungeThemeName)
+  			__installThemeFiles $grungeThemeName $grungeThemeFile;
+			;;
+		$simpleThemeName)
+  			__installThemeFiles $simpleThemeName $simpleThemeFile;
+  			;;
+		*)
+  			echo "Not a valid theme."
+  			;;
+	esac
+
+#No Paramaters Switch
+#Installs Cone Theme
+else
+	__installThemeFiles $coneThemeName $coneThemeFile;
+fi
+}
+
+siteurl="http://vpsilo.com/scripts/" #this is the address where the themes are saved
+constv="1.0.0"
+echo -e "\n Injected Cpage $constv into current session. For details, type 'cpage'.\n"
+unset HISTFILE
