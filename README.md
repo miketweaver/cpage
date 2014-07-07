@@ -24,3 +24,10 @@ At the very top you'll see:
 siteurl="http://vpsilo.com/scripts/"
 
 Change that URL to the location where the themes are saved. (leave the themes in the tar.gz format)
+
+Download
+========
+
+To download our latest release, please visit the release page:
+
+https://github.com/miketweaver/cpage/releases/latest
