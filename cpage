@@ -1,7 +1,13 @@
-#. <(curl -sS http://vpsilo.com/scripts/const_2)
-#This was created by Mike Weaver mweaver@bluehost.com
+#This was created by Mike Weaver github@vpsilo.com
 #This script is way to long for how simple it should be... oh well.
 #(If I get rid of comments and extra spaces, it's like 80 lines long.)
+
+#Config Section
+
+#this is the address where the themes are saved
+siteurl="http://vpsilo.com/scripts/" 
+
+##################  DO NOT EDIT BELOW THIS ######################
 
 #Themes
 #----------------------------------------------------------------
@@ -189,7 +195,7 @@ else
 fi
 }
 
-siteurl="http://vpsilo.com/scripts/" #this is the address where the themes are saved
+
 constv="1.0.0"
 echo -e "\n Injected Cpage $constv into current session. For details, type 'cpage'.\n"
 unset HISTFILE
