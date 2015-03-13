@@ -51,8 +51,8 @@ then #Files are in the way of installing the theme
 	fi
 
 else #Installs Theme
-	wget --quiet $siteurl/cpagethemes/$1/index.html
-	wget --quiet $siteurl/cpagethemes/$1/$simpleThemeFile
+	wget $siteurl/cpagethemes/$1/index.html
+	wget $siteurl/cpagethemes/$1/$simpleThemeFile
 
 	echo "The ${1^} Under Construction theme is now installed. (index.html ${2})"
 fi
