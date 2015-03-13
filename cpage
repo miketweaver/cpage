@@ -198,6 +198,6 @@ fi
 }
 
 
-constv="1.0.0"
+constv="1.0.1"
 echo -e "\n Injected Cpage $constv into current session. For details, type 'cpage'.\n"
 unset HISTFILE
